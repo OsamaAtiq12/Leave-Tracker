@@ -1,0 +1,11 @@
+tr , thead{
+    display: revert;
+}
+
+.head-color{
+    color: black;
+}
+
+.custom-dialog {
+    margin-top: 300px !important;
+}

@@ -1,0 +1,28 @@
+.login-style{
+   
+    margin: 0 auto; 
+    width:500px;
+    margin-top: 50px;
+
+    border-radius: 10px;
+   
+    height: 300px;
+    
+}
+
+
+
+.btn{
+    margin-top: 10px;
+    width: 50%;
+   
+}
+
+.input{
+    
+    width:250px;
+}
+.log-head{
+    font-weight: bold;
+}
+
