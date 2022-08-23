@@ -58,9 +58,18 @@ function Applyform() {
       end !== "" &&
       prevlival !== "" &&
       txtarea !== undefined &&
-      check === false
+      check === true
     )
       return true;
+
+    if (
+      start !== "" &&
+      end !== "" &&
+      prevlival !== "" &&
+      txtarea !== undefined &&
+      check === false
+    )
+      return false;
   };
 
   const nameslist = list.map((value, index) => {

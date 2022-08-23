@@ -115,7 +115,7 @@ function Orders() {
                             alt="canceled-icon"
                             className="dashboard-content-icon"
                           />
-                        ) : order.status === "Pending" ? (
+                        ) : order.status === "Applied" ? (
                           <>
                             <Icon
                               onClick={handleShow}

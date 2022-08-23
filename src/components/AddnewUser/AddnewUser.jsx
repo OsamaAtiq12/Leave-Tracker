@@ -118,7 +118,6 @@ function AddnewUser() {
           <div className="mb-3 input-div">
             <label className="type-style">Choose Type </label>
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            <label> Manager </label>
             <input
               className="check"
               type="radio"
@@ -126,7 +125,7 @@ function AddnewUser() {
               name="pos"
               onChange={handlecheck1}
             />
-            <label> Hr </label>
+            <label> Manager </label>
             <input
               className="check"
               name="pos"
@@ -134,7 +133,7 @@ function AddnewUser() {
               value="Hr"
               onChange={handlecheck2}
             />
-            <label>Employee </label>
+            <label> Hr </label>
             <input
               className="check"
               name="pos"
@@ -142,6 +141,7 @@ function AddnewUser() {
               value="Employee"
               onChange={handlecheck3}
             />
+            <label>Employee </label>
           </div>
 
           <div className="mb-3 input-div">

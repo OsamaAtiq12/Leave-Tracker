@@ -10,3 +10,25 @@ select {
     -webkit-appearance: none;
     background-position-x: 460px;
 }
+
+.table-style{
+    margin-top: 10%;
+    margin-right: 10px;
+    margin-left: 10px;
+   
+   
+}
+
+.dashboard-content-icon {
+    width: 20px;
+    margin-right: 10px;
+}
+
+.pointer{
+    cursor: pointer;
+}
+
+.icon-inline{
+    display: flex;
+   
+}

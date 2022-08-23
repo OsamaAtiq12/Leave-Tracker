@@ -148,7 +148,6 @@ function Userlist() {
                         <div className="mb-3 input-div">
                           <label className="type-style">Choose Type </label>
                           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                          <label> Manager </label>
                           <input
                             className="check"
                             type="radio"
@@ -162,7 +161,7 @@ function Userlist() {
                             }}
                             //   onChange={handlecheck1}
                           />
-                          <label> Hr </label>
+                          <label> Manager </label>
                           <input
                             className="check"
                             name="pos"
@@ -177,7 +176,7 @@ function Userlist() {
 
                             //   onChange={handlecheck2}
                           />
-                          <label>Employee </label>
+                          <label> Hr </label>
                           <input
                             className="check"
                             name="pos"
@@ -192,6 +191,7 @@ function Userlist() {
 
                             //   onChange={handlecheck3}
                           />
+                          <label>Employee </label>
                         </div>
 
                         <div className="mb-3 input-div">

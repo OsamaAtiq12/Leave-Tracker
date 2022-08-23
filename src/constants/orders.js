@@ -28,7 +28,7 @@ const all_orders = [
 
     Days: "2",
     Reason: "Illness",
-    status: "Pending",
+    status: "Applied",
   },
 ];
 
