@@ -7,12 +7,41 @@ import DoneIcon from "../../assets/icons/done.svg";
 import CancelIcon from "../../assets/icons/cancel.svg";
 import { Icon } from "@iconify/react";
 import { setDate } from "date-fns";
+import { useNavigate } from "react-router-dom";
 
+import axios from "axios";
 function EmpLeaves() {
+  const navigate = useNavigate();
+  const [selectedval, setselectedval] = React.useState([{}]);
   const [emp, setEmp] = React.useState("");
   const [month, setMonth] = React.useState("");
   const [Year, setYear] = React.useState("");
   const [spin, setspinner] = React.useState(false);
+  const [list2, setnamelist] = React.useState([{}]);
+  const url1 = "https://pkdservers.com/LeaveTracker/api/AuthUser/GetAllUsers";
+
+  const [token, setToken] = React.useState();
+  React.useEffect(() => {
+    if (!localStorage.getItem("token")) {
+      console.log("there is no item");
+      navigate("/Login");
+    }
+  }, []);
+  React.useEffect(() => {
+    getdata();
+    const Token = localStorage.getItem("token");
+    setToken(Token);
+  }, []);
+
+  const getdata = async () => {
+    try {
+      const response = await axios.get(url1);
+      console.log(JSON.stringify(response.data));
+      setnamelist(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const monthsLong = {
     January: 1,
@@ -29,30 +58,60 @@ function EmpLeaves() {
     December: 12,
   };
 
-  // const filtered = !search
-  //   ? data
-  //   : data.filter(
-  //       (item) =>
-  //         item.Name.toLowerCase().includes(emp.toLowerCase()) ||
-  //         monthsLong[new Date(item.From).getMonth()]
-  //           .toLowerCase()
-  //           .includes(monthsLong[month.toLowerCase()]) ||
-  //         new Date(item.From)
-  //           .getFullYear()
-  //           .toLowerCase()
-  //           .includes(Year.toLowerCase())
-  //     );
-
-  const handleSearch = (event) => {
+  // Searching Api data
+  const handleSearch = async (event) => {
     event.preventDefault();
-    const newdata = data.filter((item) => item.Name == emp);
-    // .filter((y) => new Date(y.From).getFullYear() === parseInt(Year));
+    setselectedval(list2.find((x) => x.Name === emp));
 
-    setdata(newdata);
+    const id = selectedval.Id;
+
+    const Searchurl =
+      "https://pkdservers.com/LeaveTracker/api/LeaveRequests/SearchEmployeeLeaves ";
+
+    const apimon = monthsLong[month];
+    const data = {
+      Id: id,
+      Month: apimon,
+      Year: Year,
+    };
+    try {
+      const response = await axios.post(
+        Searchurl,
+        data,
+
+        {
+          headers: {
+            Authorization: "Bearer" + " " + token,
+          },
+        }
+      );
+      console.log(JSON.stringify(response.data));
+      setdata(response.data);
+    } catch (err) {
+      console.log(err);
+    }
   };
 
-  const handleDelete = (index, e) => {
-    setdata(data.filter((v, i) => i !== index));
+  const handleDelete = async (index, e) => {
+    const Token = localStorage.getItem("token");
+    console.log(Token);
+    try {
+      const response = await axios.get(
+        "https://pkdservers.com/LeaveTracker/api/LeaveRequests/DeleteLeaveRequest?ID=" +
+          " " +
+          index,
+        {
+          headers: {
+            Authorization: "Bearer" + " " + Token,
+          },
+        }
+      );
+      // console.log(JSON.stringify(response.data));
+      // setnamelist(response.data);
+      // console.log(list2);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const handleSubmit = (event) => {
@@ -64,55 +123,19 @@ function EmpLeaves() {
     console.log("Year 👉️", Year);
   };
 
-  React.useEffect(() => {});
-
-  const [data, setdata] = React.useState([
-    {
-      id: "#1236",
-      Name: "osama",
-      From: "8-3-2022",
-      To: "8-3-2022",
-
-      Days: "2",
-      Reason: "Illness",
-      UnpaidLeaves: "1",
-      status: "Accepted",
-    },
-    {
-      id: "#1234",
-      Name: "ahmad",
-      From: "8-3-2021",
-      To: "8-3-2022",
-
-      Days: "2",
-      Reason: "Illness",
-      UnpaidLeaves: "3",
-      status: "Applied",
-    },
-    {
-      id: "#1235",
-      Name: "Umer",
-      From: "8-3-2020",
-      To: "8-3-2022",
-
-      Days: "2",
-      Reason: "Illness",
-      UnpaidLeaves: "5",
-      status: "Rejected",
-    },
-  ]);
+  const [data, setdata] = React.useState([]);
 
   const tabledata = data.map((value, index) => {
     return (
       <>
         <tr>
-          <td>{value.id}</td>
-          <td>{value.Name}</td>
-          <td>{value.From}</td>
-          <td>{value.To}</td>
-          <td>{value.Days}</td>
-          <td>{value.Reason}</td>
-          <td>{value.UnpaidLeaves}</td>
+          <td>{value.ID}</td>
+          <td>{value.name}</td>
+          <td>{value.from}</td>
+          <td>{value.to}</td>
+          <td>{value.reason}</td>
+          <td>{value.days}</td>
+          <td>{value.unpaidLeaves}</td>
           <td>
             <div className="icon-inline">
               {value.status === "Accepted" ? (
@@ -127,7 +150,7 @@ function EmpLeaves() {
                   alt="canceled-icon"
                   className="dashboard-content-icon"
                 />
-              ) : value.status === "Applied" ? (
+              ) : value.Status === "Approved" ? (
                 <Icon
                   onClick={(e) => handleDelete(index, e)}
                   className="dashboard-content-icon  pointer"
@@ -136,7 +159,7 @@ function EmpLeaves() {
               ) : (
                 ""
               )}
-              <span>{value.status}</span>
+              <span>{value.Status}</span>
             </div>
           </td>
         </tr>
@@ -215,10 +238,10 @@ function EmpLeaves() {
     },
   ];
 
-  const namelisting = namelist.map((value, index) => {
+  const namelisting = list2.map((value, index) => {
     return (
       <>
-        <option> {value.name}</option>
+        <option> {value.Name}</option>
       </>
     );
   });

@@ -6,18 +6,80 @@ import { calculateRange, sliceData } from "../../utils/table-pagination";
 import "../styles.css";
 import DoneIcon from "../../assets/icons/done.svg";
 import CancelIcon from "../../assets/icons/cancel.svg";
-
+import axios from "axios";
 import { Icon } from "@iconify/react";
+import id from "date-fns/esm/locale/id/index.js";
 function Orders() {
+  const [list2, setnamelist] = React.useState([{}]);
+  const url =
+    "https://pkdservers.com/LeaveTracker/api/LeaveRequests/GetMyLeaves";
+
+  React.useEffect(() => {
+    const Token = localStorage.getItem("token");
+    console.log(Token);
+
+    const getdata = async () => {
+      try {
+        const response = await axios.get(url, {
+          headers: {
+            Authorization: "Bearer" + " " + Token,
+          },
+        });
+        console.log(JSON.stringify(response.data));
+        setnamelist(response.data);
+        console.log(list2);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    getdata();
+  }, []);
+
   const [show, setShow] = React.useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
   const [search, setSearch] = useState("");
-  const [orders, setOrders] = useState(all_orders);
+  const [orders, setOrders] = useState(list2);
   const [page, setPage] = useState(1);
   const [pagination, setPagination] = useState([]);
-  const handleDelete = (index, e) => {
-    setOrders(orders.filter((v, i) => i !== index));
+
+  const handleDelete = async (Id, e) => {
+    const Token = localStorage.getItem("token");
+    console.log(Token);
+    try {
+      const response = await axios.get(
+        "https://pkdservers.com/LeaveTracker/api/LeaveRequests/DeleteLeaveRequest?ID=" +
+          " " +
+          Id,
+        {
+          headers: {
+            Authorization: "Bearer" + " " + Token,
+          },
+        }
+      );
+      // console.log(JSON.stringify(response.data));
+      // setnamelist(response.data);
+      // console.log(list2);
+    } catch (error) {
+      console.log(error);
+    }
+
+    const getdata = async () => {
+      try {
+        const response = await axios.get(url, {
+          headers: {
+            Authorization: "Bearer" + " " + Token,
+          },
+        });
+        console.log(JSON.stringify(response.data));
+        setnamelist(response.data);
+        console.log(list2);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    getdata();
+    setShow(false);
   };
   useEffect(() => {
     setPagination(calculateRange(all_orders, 5));
@@ -25,20 +87,20 @@ function Orders() {
   }, []);
 
   // Search
-  const __handleSearch = (event) => {
-    setSearch(event.target.value);
-    if (event.target.value !== "") {
-      let search_results = orders.filter(
-        (item) =>
-          item.first_name.toLowerCase().includes(search.toLowerCase()) ||
-          item.last_name.toLowerCase().includes(search.toLowerCase()) ||
-          item.product.toLowerCase().includes(search.toLowerCase())
-      );
-      setOrders(search_results);
-    } else {
-      __handleChangePage(1);
-    }
-  };
+  // const __handleSearch = (event) => {
+  //   setSearch(event.target.value);
+  //   if (event.target.value !== "") {
+  //     let search_results = orders.filter(
+  //       (item) =>
+  //         item.first_name.toLowerCase().includes(search.toLowerCase()) ||
+  //         item.last_name.toLowerCase().includes(search.toLowerCase()) ||
+  //         item.product.toLowerCase().includes(search.toLowerCase())
+  //     );
+  //     setOrders(search_results);
+  //   } else {
+  //     __handleChangePage(1);
+  //   }
+  // };
 
   // Change Page
   const __handleChangePage = (new_page) => {
@@ -69,53 +131,53 @@ function Orders() {
               <th>Name</th>
               <th>From</th>
               <th>To</th>
-              <th>Days</th>
               <th>Reason</th>
+              <th>Days</th>
               <th>Status</th>
             </thead>
 
             {orders.length !== 0 ? (
               <tbody>
-                {orders.map((order, index) => (
+                {list2.map((order, index) => (
                   <tr key={index}>
                     <td>
-                      <span>{order.id}</span>
+                      <span>{order.ID}</span>
                     </td>
                     <td>
-                      <span>{order.Name}</span>
+                      <span>{order.name}</span>
                     </td>
                     <td>
                       <div>
-                        <span>{order.From}</span>
+                        <span>{order.from}</span>
                       </div>
                     </td>
                     <td>
                       <div>
-                        <span>{order.To}</span>
+                        <span>{order.to}</span>
                       </div>
                     </td>
                     <td>
-                      <span>{order.Days}</span>
+                      <span>{order.reason}</span>
                     </td>
                     <td>
-                      <span>{order.Reason}</span>
+                      <span>{order.days}</span>
                     </td>
                     <td>
                       {" "}
                       <div>
-                        {order.status === "Accepted" ? (
+                        {order.Status === "Accepted" ? (
                           <img
                             src={DoneIcon}
                             alt="paid-icon"
                             className="dashboard-content-icon"
                           />
-                        ) : order.status === "Rejected" ? (
+                        ) : order.Status === "Rejected" ? (
                           <img
                             src={CancelIcon}
                             alt="canceled-icon"
                             className="dashboard-content-icon"
                           />
-                        ) : order.status === "Applied" ? (
+                        ) : order.Status === "Applied" ? (
                           <>
                             <Icon
                               onClick={handleShow}
@@ -138,7 +200,7 @@ function Orders() {
                                 </Button>
                                 <Button
                                   variant="primary"
-                                  onClick={(e) => handleDelete(index, e)}
+                                  onClick={(e) => handleDelete(order.ID, e)}
                                 >
                                   Delete
                                 </Button>
@@ -146,7 +208,7 @@ function Orders() {
                             </Modal>
                           </>
                         ) : null}
-                        <span>{order.status}</span>
+                        <span>{order.Status}</span>
                       </div>
                     </td>
                   </tr>
@@ -154,24 +216,6 @@ function Orders() {
               </tbody>
             ) : null}
           </table>
-
-          {orders.length !== 0 ? (
-            <div className="dashboard-content-footer">
-              {pagination.map((item, index) => (
-                <span
-                  key={index}
-                  className={item === page ? "active-pagination" : "pagination"}
-                  onClick={() => __handleChangePage(item)}
-                >
-                  {item}
-                </span>
-              ))}
-            </div>
-          ) : (
-            <div className="dashboard-content-footer">
-              <span className="empty-table">No data</span>
-            </div>
-          )}
         </div>
       </div>
     </>

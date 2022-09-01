@@ -1,17 +1,16 @@
 import React, { useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import DatePicker from "react-date-picker";
 // import "./Login.css";
 import "./User.css";
 import "bootstrap/dist/css/bootstrap.min.css";
+import axios from "axios";
 function AddnewUser() {
   const [name, setname] = React.useState("");
   const [email, setemail] = React.useState("");
   const [password, setpassword] = React.useState("");
   const [conpass, setConfirmpass] = React.useState("");
-  const [Date, setDate] = React.useState("");
-  const [check1, setcheck1] = React.useState("");
-  const [check2, setcheck2] = React.useState("");
-  const [check3, setcheck3] = React.useState("");
+  const [date, setDate] = React.useState("");
+  const [check, setcheck] = React.useState("");
 
   const handlename = (e) => {
     setname(e.target.value);
@@ -25,18 +24,13 @@ function AddnewUser() {
   const handleconpass = (e) => {
     setConfirmpass(e.target.value);
   };
-  const handleDate = (e) => {
-    setDate(e.target.value);
+  const handleDate = (date) => {
+    setDate(date);
   };
-  const handlecheck1 = (e) => {
-    setcheck1(e.target.value);
+  const handlecheck = (e) => {
+    setcheck(e.target.value);
   };
-  const handlecheck2 = (e) => {
-    setcheck2(e.target.value);
-  };
-  const handlecheck3 = (e) => {
-    setcheck3(e.target.value);
-  };
+
   function validate() {
     if (
       conpass === password &&
@@ -44,13 +38,45 @@ function AddnewUser() {
       email !== "" &&
       conpass !== "" &&
       password !== "" &&
-      Date !== ""
+      date !== ""
     ) {
-      if (check1 !== "" || check2 !== "" || check3 !== "") {
+      if (check !== "") {
         return true;
       }
     }
   }
+
+  const Handeldata = (e) => {
+    e.preventDefault();
+    const start_date = new Date(date).toISOString();
+    console.log(start_date);
+    const data = {
+      Name: name,
+      Email: email,
+      Password: password,
+      ConfirmPassword: conpass,
+      Role: "Employee",
+      SecondRole: check,
+      probationEndDate: date,
+    };
+    console.log(data);
+
+    try {
+      axios
+        .post("https://pkdservers.com/LeaveTracker/api/Account/Register", data)
+        .then((res) => {
+          console.log(res.data);
+        });
+    } catch (err) {
+      console.log(err);
+    }
+    setname("");
+    setemail("");
+    setpassword("");
+    setConfirmpass("");
+    setDate("");
+    setcheck("");
+  };
 
   return (
     <>
@@ -106,41 +132,23 @@ function AddnewUser() {
 
           <div className="mb-3 input-div">
             <label>Probation Period</label>
-            <input
-              value={Date}
-              type="date"
-              className="form-control input"
+            <DatePicker
+              className="form-control input r"
+              placeholder="Enter End Date"
               required
-              onChange={handleDate}
+              value={date}
+              onChange={(date) => handleDate(date)}
             />
           </div>
 
-          <div className="mb-3 input-div">
+          <div className="mb-3 input-div" onChange={handlecheck}>
             <label className="type-style">Choose Type </label>
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            <input
-              className="check"
-              type="radio"
-              value="Manager"
-              name="pos"
-              onChange={handlecheck1}
-            />
+            <input className="check" type="radio" value="Manager" name="pos" />
             <label> Manager </label>
-            <input
-              className="check"
-              name="pos"
-              type="radio"
-              value="Hr"
-              onChange={handlecheck2}
-            />
+            <input className="check" name="pos" type="radio" value="Hr" />
             <label> Hr </label>
-            <input
-              className="check"
-              name="pos"
-              type="radio"
-              value="Employee"
-              onChange={handlecheck3}
-            />
+            <input className="check" name="pos" type="radio" value="Employee" />
             <label>Employee </label>
           </div>
 
@@ -152,6 +160,7 @@ function AddnewUser() {
               type="submit"
               className="btn btn-primary  btn"
               disabled={!validate()}
+              onClick={Handeldata}
             >
               Add User
             </button>

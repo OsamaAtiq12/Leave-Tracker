@@ -1,43 +1,84 @@
-import React, { useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Login.css";
 import "bootstrap/dist/css/bootstrap.min.css";
+import axios from "axios";
 function Login() {
+  const url = "https://pkdservers.com/LeaveTracker/api/AuthUser/Login";
   const navigate = useNavigate();
-  const navigate1 = useNavigate();
+
   const email = useRef();
   const password = useRef();
-  const getemail = localStorage.getItem("emailData");
-  const getpassword = localStorage.getItem("passwordData");
-  const getemailhr = localStorage.getItem("emailDatahr");
-  const getpasswordhr = localStorage.getItem("passwordDatahr");
-  React.useEffect(() => {
-    if (getemail && getpassword) {
-      console.log(getemail && getpassword);
-      navigate("/");
-    }
-  }, []);
 
-  React.useEffect(() => {
-    if (getemailhr && getpasswordhr) {
-      navigate1("/hrHome");
-    }
-  }, []);
-  const handleSubmit = () => {
-    if (
-      email.current.value === "osama.517@live.com" &&
-      password.current.value === "12345"
-    ) {
-      localStorage.setItem("emailData", "osama.517@live.com");
-      localStorage.setItem("passwordData", "12345");
-    }
+  const [email1, setemail] = React.useState();
+  const [pass, setpass] = React.useState();
 
-    if (
-      email.current.value === "hr@live.com" &&
-      password.current.value === "1234"
-    ) {
-      localStorage.setItem("emailDatahr", "hr@live.com");
-      localStorage.setItem("passwordDatahr", "1234");
+  const handleemail = (e) => {
+    setemail(e.target.value);
+  };
+
+  const handlepass = (e) => {
+    setpass(e.target.value);
+  };
+
+  // React.useEffect(() => {
+  //   var getrole = localStorage.getItem("role");
+  //   var final_role = [];
+  //   if (getrole) {
+  //     final_role = getrole.split(",");
+  //   }
+  //   if (final_role.includes("Manager") && final_role.includes("Employee")) {
+  //     setLogg(true);
+  //   }
+  // }, []);
+
+  useEffect(() => {
+    localStorage.clear();
+  });
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await axios
+        .post(url, {
+          username: email1,
+          Password: pass,
+        })
+        .then((response) => {
+          localStorage.setItem("role", response.data.role);
+          const token_data = JSON.parse(response.data.user);
+
+          localStorage.setItem("token", token_data.access_token);
+
+          localStorage.setItem("username", token_data.userName);
+
+          localStorage.setItem("ID", response.data.id);
+          var getrole = localStorage.getItem("role");
+          var final_role = [];
+          if (getrole) {
+            final_role = getrole.split(",");
+          }
+          if (final_role.includes("Manager")) {
+            navigate("/");
+            window.location.reload();
+          }
+
+          if (final_role.includes("Employee")) {
+            navigate("/");
+            window.location.reload();
+          }
+
+          if (final_role.includes("HR")) {
+            navigate("/hrHome");
+            window.location.reload();
+          }
+        });
+
+      const roles = response?.data?.roles;
+    } catch (err) {
+      if (!err?.response) {
+        console.log("no response");
+      } else {
+      }
     }
   };
 
@@ -59,6 +100,7 @@ function Login() {
             placeholder="Enter email"
             required
             ref={email}
+            onChange={handleemail}
           />
         </div>
         <div className="mb-3 input-div">
@@ -69,6 +111,7 @@ function Login() {
             placeholder="Enter password"
             required
             ref={password}
+            onChange={handlepass}
           />
         </div>
         <div className="mb-3 input-div">

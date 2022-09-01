@@ -4,8 +4,13 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import TextareaAutosize from "@mui/material/TextareaAutosize";
 import { Modal, Button } from "react-bootstrap";
 import "./Apply.css";
-
+import axios from "axios";
 function Applyform() {
+  const url =
+    "https://pkdservers.com/LeaveTracker/api/LeaveRequests/PostLeaveRequest";
+
+  const url1 =
+    "https://pkdservers.com/LeaveTracker/api/AuthUser/GetAllManagers";
   const [li, setli] = React.useState("");
   const [start, setstartState] = React.useState(null);
   const [half, sethalf] = React.useState(false);
@@ -13,76 +18,133 @@ function Applyform() {
   const [check, setcheck] = React.useState(false);
   const prevlival = React.useRef();
   const [txtarea, settxtarea] = React.useState("");
+  const [list2, setnamelist] = React.useState([{}]);
+  const [team_lead_id, setid] = React.useState();
+  const [token, setToken] = React.useState();
 
+  React.useEffect(() => {
+    const Token = localStorage.getItem("token");
+    setToken(Token);
+  }, []);
+
+  React.useEffect(() => {
+    const getdata = async () => {
+      try {
+        const response = await axios.get(url1);
+        console.log(JSON.stringify(response.data));
+        setnamelist(response.data);
+        console.log(list2);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    getdata();
+  }, []);
+
+  const handledata = async (e) => {
+    e.preventDefault();
+    const userid = localStorage.getItem("ID");
+    const start_date = new Date(start).toISOString();
+    const end_date = new Date(end).toISOString();
+
+    const data = {
+      User_id: userid,
+      StartDate: start_date,
+      EndDate: end_date,
+      HalfDay: check,
+      Team_lead_id: team_lead_id.Id,
+      Reason: txtarea,
+    };
+    console.log(data);
+
+    try {
+      axios
+        .post(
+          "https://pkdservers.com/LeaveTracker/api/LeaveRequests/PostLeaveRequest",
+          data,
+          {
+            headers: {
+              Authorization: "Bearer" + " " + token,
+            },
+          }
+        )
+        .then((res) => {
+          console.log(res.data);
+        });
+    } catch (err) {
+      console.log(err);
+    }
+
+    settxtarea("");
+    setstartState("");
+    setendState("");
+    setli("");
+    setcheck("");
+  };
   const handleChangearea = (event) => {
-    settxtarea(event.target.value.trim());
+    settxtarea(event.target.value);
   };
 
-  const list = [
-    {
-      names: "Alpha",
-    },
-    {
-      names: "Manager Tester",
-    },
-
-    {
-      names: "Fahad Shahid",
-    },
-  ];
   function handleChange(date) {
     setstartState(date);
+    console.log(start);
   }
 
   function handleChangeend(date) {
     setendState(date);
+    console.log(end);
   }
   function handleChangelist(e) {
-    setli(e.target.value);
+    setli(e.currentTarget.value);
   }
+
+  React.useEffect(() => {
+    const id = list2.find((x) => x.Name === li);
+    setid(id);
+  });
   function handleChangecheck(e) {
     setcheck(e.target.checked);
   }
   const validate = () => {
-    if (
-      start !== "" &&
-      end !== "" &&
-      prevlival !== "" &&
-      txtarea !== "" &&
-      check === true
-    )
-      return true;
+    if (start <= end) {
+      if (
+        start !== "" &&
+        end !== "" &&
+        prevlival !== "" &&
+        txtarea !== "" &&
+        check === true
+      )
+        return true;
 
-    if (
-      start !== "" &&
-      end !== "" &&
-      prevlival !== "" &&
-      txtarea !== undefined &&
-      check === true
-    )
-      return true;
+      if (
+        start !== "" &&
+        end !== "" &&
+        prevlival !== "" &&
+        txtarea !== undefined &&
+        check === true
+      )
+        return true;
 
-    if (
-      start !== "" &&
-      end !== "" &&
-      prevlival !== "" &&
-      txtarea !== undefined &&
-      check === false
-    )
-      return false;
+      if (
+        start !== "" &&
+        end !== "" &&
+        prevlival !== "" &&
+        txtarea !== undefined &&
+        check === false
+      )
+        return true;
+    }
   };
 
-  const nameslist = list.map((value, index) => {
+  const nameslist = list2.map((value, index) => {
     return (
       <>
-        <option>{value.names}</option>
+        <option>{value.Name}</option>
       </>
     );
   });
 
   React.useEffect(() => {
-    console.log(new Date(start).getTime());
-    console.log(new Date(end).getTime());
     if (new Date(start).getTime() === new Date(end).getTime()) {
       sethalf(true);
     }
@@ -119,6 +181,14 @@ function Applyform() {
                 onChange={(date) => handleChangeend(date)}
               />
             </div>
+            {end < start ? (
+              <label className="Error">
+                {" "}
+                End Date must be greater than start Date
+              </label>
+            ) : (
+              ""
+            )}
 
             {half === true ? (
               <div className="mb-3">
@@ -141,6 +211,10 @@ function Applyform() {
                 value={li}
                 onChange={(e) => handleChangelist(e)}
               >
+                <option value="" disabled>
+                  {" "}
+                  Select Team Lead
+                </option>
                 {nameslist}
               </select>
             </div>
@@ -165,6 +239,7 @@ function Applyform() {
                 disabled={!validate()}
                 type="submit"
                 className="btn btn-primary  btn"
+                onClick={handledata}
               >
                 Send
               </button>

@@ -4,6 +4,7 @@ import DatePicker from "react-date-picker";
 import "bootstrap/dist/css/bootstrap.min.css";
 import TextareaAutosize from "@mui/material/TextareaAutosize";
 import "./Behalf.css";
+import axios from "axios";
 function OnBehalf() {
   const [li, setli] = React.useState("");
   const [start, setstartState] = React.useState(null);
@@ -13,36 +14,99 @@ function OnBehalf() {
   const prevlival = React.useRef();
   const [txtarea, settxtarea] = React.useState("");
   const [liemp, setliemp] = React.useState("");
+  const [list2, setnamelist] = React.useState([{}]);
+  const [list3, setnamelist3] = React.useState([{}]);
+
+  const [selectedval, setselectedval] = React.useState([{}]);
+  const [token, setToken] = React.useState();
+  // React.useEffect(() => {
+  //   if (localStorage.getItem("token") === null) {
+  //     console.log("there is no token");
+  //     navigate("/Login");
+  //   }
+  // }, []);
+  React.useEffect(() => {
+    const Token = localStorage.getItem("token");
+    setToken(Token);
+  }, []);
 
   const handleChangearea = (event) => {
-    settxtarea(event.target.value.trim());
+    settxtarea(event.target.value);
+  };
+  const url1 = "https://pkdservers.com/LeaveTracker/api/AuthUser/GetAllUsers";
+  React.useEffect(() => {
+    const getdata = async () => {
+      try {
+        const response = await axios.get(url1);
+        console.log(JSON.stringify(response.data));
+        setnamelist(response.data);
+        console.log(list2);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    getdata();
+  }, []);
+
+  const url2 =
+    "https://pkdservers.com/LeaveTracker/api/AuthUser/GetAllManagers";
+  React.useEffect(() => {
+    const getdata = async () => {
+      try {
+        const response = await axios.get(url2);
+        console.log(JSON.stringify(response.data));
+        setnamelist3(response.data);
+        console.log(list3);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    getdata();
+  }, []);
+
+  const handlebehalf = async (e) => {
+    e.preventDefault();
+    const userid = localStorage.getItem("ID");
+    const start_date = new Date(start).toISOString();
+    const end_date = new Date(end).toISOString();
+    setselectedval(list2.find((x) => x.Name === li));
+
+    const data = {
+      User_id: userid,
+      StartDate: start_date,
+      EndDate: end_date,
+      HalfDay: check,
+      Team_lead_id: selectedval.Id,
+      Reason: txtarea,
+    };
+    console.log(data);
+
+    try {
+      axios
+        .post(
+          "https://pkdservers.com/LeaveTracker/api/LeaveRequests/PostLeaveRequest",
+          data,
+          {
+            headers: {
+              Authorization: "Bearer" + " " + token,
+            },
+          }
+        )
+        .then((res) => {
+          console.log(res.data);
+        });
+    } catch (err) {
+      console.log(err);
+    }
+
+    setstartState("");
+    setendState("");
+    setli("");
+    setliemp("");
+    setcheck("");
+    settxtarea("");
   };
 
-  const list = [
-    {
-      names: "Alpha",
-    },
-    {
-      names: "Manager Tester",
-    },
-
-    {
-      names: "Fahad Shahid",
-    },
-  ];
-
-  const listemp = [
-    {
-      names: "Osama",
-    },
-    {
-      names: "Shoaib",
-    },
-
-    {
-      names: "Ali",
-    },
-  ];
   function handleChange(date) {
     setstartState(date);
   }
@@ -62,7 +126,7 @@ function OnBehalf() {
   }
   const validate = () => {
     if (
-      liemp !== "" &&
+      start > end &&
       start !== "" &&
       end !== "" &&
       prevlival !== "" &&
@@ -72,7 +136,15 @@ function OnBehalf() {
       return true;
 
     if (
-      liemp !== "" &&
+      start !== "" &&
+      end !== "" &&
+      prevlival !== "" &&
+      txtarea !== undefined &&
+      check === true
+    )
+      return true;
+
+    if (
       start !== "" &&
       end !== "" &&
       prevlival !== "" &&
@@ -82,18 +154,18 @@ function OnBehalf() {
       return true;
   };
 
-  const nameslist = list.map((value, index) => {
+  const nameslist = list3.map((value, index) => {
     return (
       <>
-        <option>{value.names}</option>
+        <option>{value.Name}</option>
       </>
     );
   });
 
-  const empnameslist = listemp.map((value, index) => {
+  const empnameslist = list2.map((value, index) => {
     return (
       <>
-        <option>{value.names}</option>
+        <option>{value.Name}</option>
       </>
     );
   });
@@ -101,7 +173,7 @@ function OnBehalf() {
   React.useEffect(() => {
     console.log(new Date(start).getTime());
     console.log(new Date(end).getTime());
-    if (new Date(start).getTime() == new Date(end).getTime()) {
+    if (new Date(start).getTime() === new Date(end).getTime()) {
       sethalf(true);
     }
     if (new Date(start).getTime() !== new Date(end).getTime()) {
@@ -195,6 +267,7 @@ function OnBehalf() {
                 disabled={!validate()}
                 type="submit"
                 className="btn btn-primary  btn"
+                onClick={handlebehalf}
               >
                 Send
               </button>

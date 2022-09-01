@@ -7,6 +7,8 @@ import getDate from "date-fns/getDate";
 import getDay from "date-fns/getDay";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import "./Calendar.css";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 const locales = {
   "en-US": require("date-fns/locale/en-US"),
 };
@@ -18,41 +20,52 @@ const localizer = dateFnsLocalizer({
   locales,
 });
 
-const events = [
-  {
-    title: "Syed Talha Hassan (Pending)",
-    allDay: true,
-    start: new Date(2022, 8, 0),
-    end: new Date(2022, 8, 3),
-  },
-
-  {
-    title: "Shoaib  (Pending)",
-    allDay: true,
-    start: new Date(2022, 7, 3),
-    end: new Date(2022, 7, 9),
-  },
-  {
-    title: "Vacation",
-    start: new Date(2021, 6, 7),
-    end: new Date(2021, 6, 10),
-  },
-  {
-    title: "Conference",
-    start: new Date(2021, 6, 20),
-    end: new Date(2021, 6, 23),
-  },
-];
 function EventCal() {
+  const [token, setToken] = React.useState();
+
+  const navigate = useNavigate();
+  const [list2, setnamelist] = React.useState([{}]);
+
+  const url =
+    "https://pkdservers.com/LeaveTracker/api/LeaveRequests/GetClanderData";
+
+  React.useEffect(() => {
+    const Token = localStorage.getItem("token");
+
+    const getdata = async () => {
+      try {
+        const response = await axios.get(url, {
+          headers: {
+            Authorization: "Bearer" + " " + Token,
+          },
+        });
+        console.log(JSON.stringify(response.data));
+        setnamelist(response.data);
+        console.log(list2);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    getdata();
+  }, []);
+
+  React.useEffect(() => {
+    if (!localStorage.getItem("token")) {
+      console.log("there is no item");
+      navigate("/Login");
+    }
+  }, []);
   return (
     <div className="My-calendar">
       <Calendar
+        showAllEvents
+        no-overlap
         localizer={localizer}
-        events={events}
+        events={list2}
         views={["month"]}
         startAccessor="start"
         endAccessor="end"
-        style={{ height: 500, margin: "50px", width: "auto" }}
+        style={{ height: 700, margin: "50px", width: "auto" }}
       />
     </div>
   );

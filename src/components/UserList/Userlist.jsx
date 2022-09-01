@@ -4,57 +4,147 @@ import React from "react";
 import Table from "react-bootstrap/Table";
 import { Button, Modal } from "react-bootstrap";
 import "./table.css";
+import axios from "axios";
 function Userlist() {
   const [EditingUser, setEditingUser] = React.useState(null);
   const [show, setShow] = React.useState(false);
   const [show2, setShow2] = React.useState(false);
   const handleClose = () => setShow(false);
-
+  const [Role, setRole] = React.useState();
   const [date, setdate] = React.useState("");
-
+  const [list2, setnamelist] = React.useState([{}]);
   const handleClose2 = () => setShow2(false);
-
+  const url = "https://pkdservers.com/LeaveTracker/api/AuthUser/GetAllUsers ";
   const handleShow = () => setShow(true);
-  const [user, setuser] = React.useState([
-    {
-      id: "1",
-      Name: "Fahad Shahid",
-      email: "Fahadshahid@live.com",
-      probation: "11/01/2018",
-      type: "HR",
-    },
+  const [id, setid] = React.useState();
 
-    {
-      id: "2",
-      Name: "Ali",
-      email: "Ali@live.com",
-      probation: "11/01/2018",
-      type: "Manager",
-    },
+  const [name, setname] = React.useState("");
+  const [email, setemail] = React.useState("");
+  const [role, setnewRole] = React.useState("");
 
-    {
-      id: "3",
-      Name: "Osama",
-      email: "Osama@live.com",
-      probation: "11/01/2018",
-      type: "Employee",
-    },
-  ]);
-  const handleDelete = (index, e) => {
-    setuser(user.filter((v, i) => i !== index));
+  const [token, setToken] = React.useState();
+
+  React.useEffect(() => {
+    const Token = localStorage.getItem("token");
+    setToken(Token);
+  }, []);
+  const getdata = async () => {
+    try {
+      const response = await axios.get(url);
+      console.log(JSON.stringify(response.data));
+      setnamelist(response.data);
+      console.log(list2);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  React.useEffect(() => {
+    getdata();
+  }, []);
+
+  const handleDelete = async (Id, e) => {
+    const Token = localStorage.getItem("token");
+    console.log(Token);
+    try {
+      const response1 = await axios.get(
+        "https://pkdservers.com/LeaveTracker/api/AuthUser/DeleteUser?Id=" + Id,
+        {
+          headers: {
+            Authorization: "Bearer" + " " + Token,
+          },
+        }
+      );
+      console.log(response1);
+    } catch (error) {
+      console.log(error);
+    }
+
+    const getdata = async () => {
+      try {
+        const response = await axios.get(url, {
+          headers: {
+            Authorization: "Bearer" + " " + Token,
+          },
+        });
+        console.log(JSON.stringify(response.data));
+        setnamelist(response.data);
+        console.log(list2);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    getdata();
+
     handleClose(true);
   };
 
+  const HandleEdit = async () => {
+    const Token = localStorage.getItem("token");
+    console.log(Token);
+
+    const url = "https://pkdservers.com/LeaveTracker/api/AuthUser/UpdateUser";
+
+    const api_date = new Date(date).toISOString();
+    console.log(api_date);
+    console.log(Role);
+    const data = {
+      Id: id,
+      Name: name,
+      Email: email,
+      Role: Role,
+      Probation: api_date,
+    };
+
+    try {
+      axios
+        .post(url, data, {
+          headers: {
+            Authorization: "Bearer" + " " + token,
+          },
+        })
+        .then((res) => {
+          getdata();
+        });
+    } catch (error) {
+      console.log(error);
+    }
+
+    setShow2(false);
+  };
+
   const onedituser = (record) => {
-    console.log(record);
+    console.log(record.Roles);
 
-    const [day, month, year] = record.probation.split("/");
+    setid(record.Id);
+
+    if (record.Roles.includes("Manager") && record.Roles.includes("Employee")) {
+      setRole("Manager");
+    }
+
+    if (record.Roles.includes("HR") && record.Roles.includes("Employee")) {
+      setRole("HR");
+    }
+
+    if (
+      record.Roles.includes("Employee") &&
+      !record.Roles.includes("HR") &&
+      !record.Roles.includes("Manager")
+    ) {
+      console.log("in employee");
+      setRole("");
+    }
+    const today = new Date(record.probation);
+    const my_date = today.toISOString().split("T")[0];
+    const my_finaldate = my_date.split("-").reverse().join("/");
+    const [day, month, year] = my_finaldate.split("/");
     const date = `${year}-${month}-${day}`;
-
+    setname(record.Name);
     setdate(date);
+    setemail(record.Email);
 
     setShow2(true);
     setEditingUser({ ...record });
+    console.log(EditingUser);
   };
 
   const resetEditing = () => {
@@ -62,12 +152,30 @@ function Userlist() {
     setEditingUser(null);
   };
 
-  const datashow = user.map((value, index) => {
+  const handlename = (e) => {
+    setname(e.currentTarget.value);
+  };
+  const handleemail = (e) => {
+    setemail(e.currentTarget.value);
+  };
+  const handledate = (e) => {
+    setdate(e.currentTarget.value);
+  };
+
+  const handleRole = (e) => {
+    setRole(e.currentTarget.value);
+    console.log("hello");
+  };
+
+  React.useEffect(() => {
+    console.log(Role);
+  });
+  const datashow = list2.map((value, index) => {
     return (
       <>
         <tbody>
           <tr>
-            <td>{value.id}</td>
+            <td>{index}</td>
             <td>{value.Name}</td>
 
             <td>
@@ -97,32 +205,24 @@ function Userlist() {
                         <div className="mb-3">
                           <label>Name</label>
                           <input
-                            value={EditingUser?.Name}
+                            value={name}
                             type="text"
                             className="form-control input1"
                             placeholder="Enter Name"
                             required
-                            onChange={(e) => {
-                              setEditingUser((pre) => {
-                                return { ...pre, Name: e.target.value };
-                              });
-                            }}
+                            onChange={handlename}
                           />
                         </div>
 
                         <div className="mb-3">
                           <label>Email address</label>
                           <input
-                            value={EditingUser?.email}
+                            value={email}
                             type="email"
                             className="form-control input1"
                             placeholder="Enter email"
                             required
-                            onChange={(e) => {
-                              setEditingUser((pre) => {
-                                return { ...pre, email: e.target.value };
-                              });
-                            }}
+                            onChange={handleemail}
                           />
                         </div>
 
@@ -133,15 +233,7 @@ function Userlist() {
                             type="date"
                             className="form-control input1"
                             required
-                            onChange={(e) => {
-                              setEditingUser((pre) => {
-                                setdate(e.target.value);
-                                return {
-                                  ...pre,
-                                  probation: e.target.value,
-                                };
-                              });
-                            }}
+                            onChange={handledate}
                           />
                         </div>
 
@@ -153,12 +245,8 @@ function Userlist() {
                             type="radio"
                             value="Manager"
                             name="pos"
-                            checked={EditingUser?.type === "Manager"}
-                            onChange={(e) => {
-                              setEditingUser((pre) => {
-                                return { ...pre, type: e.target.value };
-                              });
-                            }}
+                            checked={Role === "Manager"}
+                            onChange={handleRole}
                             //   onChange={handlecheck1}
                           />
                           <label> Manager </label>
@@ -167,12 +255,8 @@ function Userlist() {
                             name="pos"
                             type="radio"
                             value="HR"
-                            checked={EditingUser?.type === "HR"}
-                            onChange={(e) => {
-                              setEditingUser((pre) => {
-                                return { ...pre, type: e.target.value };
-                              });
-                            }}
+                            checked={Role === "HR"}
+                            onChange={handleRole}
 
                             //   onChange={handlecheck2}
                           />
@@ -181,13 +265,9 @@ function Userlist() {
                             className="check"
                             name="pos"
                             type="radio"
-                            value="Employee"
-                            checked={EditingUser?.type === "Employee"}
-                            onChange={(e) => {
-                              setEditingUser((pre) => {
-                                return { ...pre, type: e.target.value };
-                              });
-                            }}
+                            value=""
+                            checked={Role === ""}
+                            onChange={handleRole}
 
                             //   onChange={handlecheck3}
                           />
@@ -206,21 +286,7 @@ function Userlist() {
                     <Button variant="secondary" onClick={resetEditing}>
                       Cancel
                     </Button>
-                    <Button
-                      variant="primary"
-                      onClick={() => {
-                        setuser((pre) => {
-                          return pre.map((user) => {
-                            if (user.id === EditingUser?.id) {
-                              return EditingUser;
-                            } else {
-                              return user;
-                            }
-                          });
-                        });
-                        resetEditing();
-                      }}
-                    >
+                    <Button variant="primary" onClick={HandleEdit}>
                       Save
                     </Button>
                   </Modal.Footer>
@@ -256,7 +322,7 @@ function Userlist() {
                     </Button>
                     <Button
                       variant="primary"
-                      onClick={(e) => handleDelete(index, e)}
+                      onClick={(e) => handleDelete(value.Id, e)}
                     >
                       Delete
                     </Button>

@@ -13,29 +13,34 @@ import EventCal from "./components/EventCalendar/EventCal";
 import OnBehalf from "./components/OnBehalfForm/Onbehalf";
 import Userlist from "./components/UserList/Userlist";
 function App() {
-  const getemailhr = localStorage.getItem("emailDatahr");
-  const getpasswordhr = localStorage.getItem("passwordDatahr");
-  const getemail = localStorage.getItem("emailData");
-  const getpassword = localStorage.getItem("passwordData");
+  const getrole = localStorage.getItem("role");
+  const loggedin = window.localStorage.getItem("LoggedIn");
+  var final_role = [];
+  if (getrole) {
+    final_role = getrole.split(",");
+  }
+  const isLoggedIn = localStorage.getItem("token");
+
   return (
-    <Router>
+    <>
       <Routes>
         {" "}
-        <Route
-          path="/Login"
-          element={
-            <>
-              <Login />
-            </>
-          }
-        />
+        <Route path="/Login" element={<>{isLoggedIn ? "" : <Login />}</>} />
       </Routes>
-      {getemail === "osama.517@live.com" && getpassword === "12345" ? (
+      {final_role.includes("Manager") && final_role.includes("Employee") ? (
         <div className="dashboard-container">
-          <SideBar menu={sidebar_menu} />
+          {localStorage.getItem("token") !== null &&
+          final_role.includes("Manager") &&
+          final_role.includes("Employee") ? (
+            <SideBar menu={sidebar_menu} />
+          ) : (
+            ""
+          )}
+
           <div className="dashboard-body">
             <Routes>
               <Route path="*" element={<div></div>} />
+
               <Route path="/" element={<EventCal />} />
               <Route exact path="/Leaves" element={[<Orders />]} />
               <Route exact path="/Apply" element={<Applyform />} />
@@ -45,16 +50,50 @@ function App() {
       ) : (
         ""
       )}
-
-      {getemailhr === "hr@live.com" && getpasswordhr === "1234" ? (
+      {final_role.includes("Employee") &&
+      !final_role.includes("Manager") &&
+      !final_role.includes("HR") ? (
         <div className="dashboard-container">
-          <SideBar menu={Hrside} />
+          {localStorage.getItem("token") !== null &&
+          final_role.includes("Employee") &&
+          !final_role.includes("HR") &&
+          !final_role.includes("Manager") ? (
+            <SideBar menu={sidebar_menu} />
+          ) : (
+            ""
+          )}
+
           <div className="dashboard-body">
             <Routes>
               <Route path="*" element={<div></div>} />
+
+              <Route path="/" element={<EventCal />} />
+              <Route exact path="/Leaves" element={[<Orders />]} />
+              <Route exact path="/Apply" element={<Applyform />} />
+            </Routes>
+          </div>
+        </div>
+      ) : (
+        ""
+      )}
+      {final_role.includes("HR") ? (
+        <div className="dashboard-container">
+          {localStorage.getItem("token") !== null &&
+          final_role.includes("HR") &&
+          final_role.includes("Employee") ? (
+            <SideBar menu={Hrside} />
+          ) : (
+            ""
+          )}
+
+          <div className="dashboard-body">
+            <Routes>
+              <Route path="*" element={<div></div>} />
+
               <Route path="/hrHome" element={<EventCal />} />
               <Route exact path="/hrLeaves" element={[<Orders />]} />
               <Route exact path="/hrApply" element={<Applyform />} />
+
               <Route exact path="/EmpLeaves" element={<EmpLeaves />} />
               <Route exact path="/OnBehalf" element={<OnBehalf />} />
               <Route exact path="/NewUser" element={<AddnewUser />} />
@@ -64,8 +103,8 @@ function App() {
         </div>
       ) : (
         ""
-      )}
-    </Router>
+      )}{" "}
+    </>
   );
 }
 

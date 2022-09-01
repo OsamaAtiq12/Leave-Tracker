@@ -4,5 +4,9 @@
 
 .rbc-calendar {
     font-family: sans-serif;
-    font-size: large;
+    font-size: 12px
+  }
+
+  .rbc-event{
+    height: 3em;
   }

@@ -13,8 +13,7 @@ select {
 
 .table-style{
     margin-top: 10%;
-    margin-right: 10px;
-    margin-left: 10px;
+  
    
    
 }
@@ -30,5 +29,6 @@ select {
 
 .icon-inline{
     display: flex;
+ 
    
 }
