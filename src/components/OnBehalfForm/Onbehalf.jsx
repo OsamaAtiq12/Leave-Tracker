@@ -125,33 +125,34 @@ function OnBehalf() {
     setcheck(e.target.checked);
   }
   const validate = () => {
-    if (
-      start > end &&
-      start !== "" &&
-      end !== "" &&
-      prevlival !== "" &&
-      txtarea !== "" &&
-      check === true
-    )
-      return true;
+    if (start <= end) {
+      if (
+        start !== "" &&
+        end !== "" &&
+        prevlival !== "" &&
+        txtarea !== "" &&
+        check === true
+      )
+        return true;
 
-    if (
-      start !== "" &&
-      end !== "" &&
-      prevlival !== "" &&
-      txtarea !== undefined &&
-      check === true
-    )
-      return true;
+      if (
+        start !== "" &&
+        end !== "" &&
+        prevlival !== "" &&
+        txtarea !== undefined &&
+        check === true
+      )
+        return true;
 
-    if (
-      start !== "" &&
-      end !== "" &&
-      prevlival !== "" &&
-      txtarea !== undefined &&
-      check === false
-    )
-      return true;
+      if (
+        start !== "" &&
+        end !== "" &&
+        prevlival !== "" &&
+        txtarea !== undefined &&
+        check === false
+      )
+        return true;
+    }
   };
 
   const nameslist = list3.map((value, index) => {
@@ -221,6 +222,14 @@ function OnBehalf() {
                 onChange={(date) => handleChangeend(date)}
               />
             </div>
+            {end < start ? (
+              <label className="Error">
+                {" "}
+                End Date must be greater than start Date
+              </label>
+            ) : (
+              ""
+            )}
 
             {half === true ? (
               <div className="mb-3">

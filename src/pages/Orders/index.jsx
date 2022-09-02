@@ -114,15 +114,6 @@ function Orders() {
         <div className="dashboard-content-container">
           <div className="dashboard-content-header">
             <h2>My Leaves</h2>
-            {/* <div className="dashboard-content-search">
-              <input
-                type="text"
-                value={search}
-                placeholder="Search.."
-                className="dashboard-content-input"
-                onChange={(e) => __handleSearch(e)}
-              />
-            </div> */}
           </div>
 
           <table>
