@@ -94,6 +94,7 @@ function EmpLeaves() {
 
   const handleDelete = async (index, e) => {
     const Token = localStorage.getItem("token");
+    console.log(index);
     console.log(Token);
     try {
       const response = await axios.get(
@@ -111,6 +112,35 @@ function EmpLeaves() {
       // console.log(list2);
     } catch (error) {
       console.log(error);
+    }
+    setselectedval(list2.find((x) => x.Name === emp));
+
+    const id = selectedval.Id;
+
+    const Searchurl =
+      "https://pkdservers.com/LeaveTracker/api/LeaveRequests/SearchEmployeeLeaves ";
+
+    const apimon = monthsLong[month];
+    const data = {
+      Id: id,
+      Month: apimon,
+      Year: Year,
+    };
+    try {
+      const response = await axios.post(
+        Searchurl,
+        data,
+
+        {
+          headers: {
+            Authorization: "Bearer" + " " + token,
+          },
+        }
+      );
+      console.log(JSON.stringify(response.data));
+      setdata(response.data);
+    } catch (err) {
+      console.log(err);
     }
   };
 
@@ -152,7 +182,7 @@ function EmpLeaves() {
                 />
               ) : value.Status === "Approved" ? (
                 <Icon
-                  onClick={(e) => handleDelete(index, e)}
+                  onClick={(e) => handleDelete(value.ID, e)}
                   className="dashboard-content-icon  pointer"
                   icon="fluent:delete-dismiss-24-filled"
                 />
