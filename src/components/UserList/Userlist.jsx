@@ -43,6 +43,7 @@ function Userlist() {
   }, []);
 
   const handleDelete = async (Id, e) => {
+    console.log(Id);
     const Token = localStorage.getItem("token");
     console.log(Token);
     try {
@@ -300,12 +301,15 @@ function Userlist() {
                   data-toggle="tooltip"
                   style={{ color: "red" }}
                 >
-                  <i className="material-icons" onClick={handleShow}>
+                  <i
+                    className="material-icons"
+                    onClick={(e) => handleDelete(value.Id, e)}
+                  >
                     &#xE872;
                   </i>
                 </a>
 
-                <Modal
+                {/* <Modal
                   ClassName="custom-dialog"
                   show={show}
                   onHide={handleClose}
@@ -327,7 +331,7 @@ function Userlist() {
                       Delete
                     </Button>
                   </Modal.Footer>
-                </Modal>
+                </Modal> */}
               </>
             </td>
           </tr>
