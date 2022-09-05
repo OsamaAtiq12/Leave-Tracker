@@ -8,7 +8,7 @@ import CancelIcon from "../../assets/icons/cancel.svg";
 import { Icon } from "@iconify/react";
 import { setDate } from "date-fns";
 import { useNavigate } from "react-router-dom";
-
+import { Modal, Button } from "react-bootstrap";
 import axios from "axios";
 function EmpLeaves() {
   const navigate = useNavigate();
@@ -20,6 +20,8 @@ function EmpLeaves() {
   const [list2, setnamelist] = React.useState([{}]);
   const url1 = "https://pkdservers.com/LeaveTracker/api/AuthUser/GetAllUsers";
 
+  const [show, setShow] = React.useState(false);
+  const handleClose = () => setShow(false);
   const [token, setToken] = React.useState();
   React.useEffect(() => {
     if (!localStorage.getItem("token")) {
@@ -113,6 +115,8 @@ function EmpLeaves() {
     } catch (error) {
       console.log(error);
     }
+    setShow(true);
+    setTimeout(() => setShow(false), 1000);
     setselectedval(list2.find((x) => x.Name === emp));
 
     const id = selectedval.Id;
@@ -324,10 +328,12 @@ function EmpLeaves() {
           </div>
           <div className="mb-3">
             <label>Month</label>
-            <select className="form-control input" onChange={handlemon}>
-              <option value={month} disabled selected>
-                Select Month
-              </option>
+            <select
+              className="form-control input"
+              onChange={handlemon}
+              placeholder="Select Month"
+            >
+              <option value=""> Select Month </option>
               {monthlist}
             </select>
           </div>
@@ -335,9 +341,7 @@ function EmpLeaves() {
           <div className="mb-3">
             <label>Year</label>
             <select className="form-control input" onChange={handleyear}>
-              <option value={Year} disabled selected>
-                Select Year
-              </option>
+              <option value={Year}>Select Year</option>
               <option> 2020</option>
               <option> 2021</option>
               <option> 2022</option>
@@ -387,6 +391,13 @@ function EmpLeaves() {
           </thead>
           <tbody>{tabledata}</tbody>
         </Table>
+        <Modal show={show} onHide={handleClose}>
+          <Modal.Header closeButton>
+            <Modal.Title>Leave Deleted</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>Leave Successfully Deleted</Modal.Body>
+          <Modal.Footer></Modal.Footer>
+        </Modal>
       </form>
     </>
   );

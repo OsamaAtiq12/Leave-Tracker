@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Modal, Button } from "react-bootstrap";
+
 import all_orders from "../../constants/orders";
 import { calculateRange, sliceData } from "../../utils/table-pagination";
 
@@ -8,6 +8,7 @@ import DoneIcon from "../../assets/icons/done.svg";
 import CancelIcon from "../../assets/icons/cancel.svg";
 import axios from "axios";
 import { Icon } from "@iconify/react";
+import { Modal, Button } from "react-bootstrap";
 import id from "date-fns/esm/locale/id/index.js";
 function Orders() {
   const [list2, setnamelist] = React.useState([{}]);
@@ -37,7 +38,7 @@ function Orders() {
 
   const [show, setShow] = React.useState(false);
   const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
+
   const [search, setSearch] = useState("");
   const [orders, setOrders] = useState(list2);
   const [page, setPage] = useState(1);
@@ -79,7 +80,8 @@ function Orders() {
       }
     };
     getdata();
-    setShow(false);
+    setShow(true);
+    setTimeout(() => setShow(false), 1000);
   };
   useEffect(() => {
     setPagination(calculateRange(all_orders, 5));
@@ -185,6 +187,13 @@ function Orders() {
               </tbody>
             ) : null}
           </table>
+          <Modal show={show} onHide={handleClose}>
+            <Modal.Header closeButton>
+              <Modal.Title>Leave Deleted</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>Leave Successfully Deleted</Modal.Body>
+            <Modal.Footer></Modal.Footer>
+          </Modal>
         </div>
       </div>
     </>

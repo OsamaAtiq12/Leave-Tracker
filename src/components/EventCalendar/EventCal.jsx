@@ -1,4 +1,5 @@
 import React from "react";
+
 import { Calendar, dateFnsLocalizer } from "react-big-calendar";
 import format from "date-fns/format";
 import parse from "date-fns/parse";
@@ -58,7 +59,7 @@ function EventCal() {
   return (
     <div className="My-calendar">
       <Calendar
-        showAllEvents
+        popup
         no-overlap
         localizer={localizer}
         events={list2}
@@ -66,9 +67,6 @@ function EventCal() {
         startAccessor="start"
         endAccessor="end"
         style={{ height: 700, margin: "50px", width: "auto" }}
-        onShowMore={const show(() => {
-          console.log(list2);
-        })}
       />
     </div>
   );

@@ -4,6 +4,7 @@ import DatePicker from "react-date-picker";
 import "./User.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import axios from "axios";
+import { Modal, Button } from "react-bootstrap";
 function AddnewUser() {
   const [name, setname] = React.useState("");
   const [email, setemail] = React.useState("");
@@ -11,7 +12,8 @@ function AddnewUser() {
   const [conpass, setConfirmpass] = React.useState("");
   const [date, setDate] = React.useState("");
   const [check, setcheck] = React.useState("");
-
+  const [show, setShow] = React.useState(false);
+  const handleClose = () => setShow(false);
   const handlename = (e) => {
     setname(e.target.value);
   };
@@ -48,6 +50,7 @@ function AddnewUser() {
 
   const Handeldata = (e) => {
     e.preventDefault();
+
     const start_date = new Date(date).toISOString();
     console.log(start_date);
     const data = {
@@ -66,16 +69,15 @@ function AddnewUser() {
         .post("https://pkdservers.com/LeaveTracker/api/Account/Register", data)
         .then((res) => {
           console.log(res.data);
-        });
+        })
+        .then(() => {});
     } catch (err) {
       console.log(err);
     }
-    setname("");
-    setemail("");
-    setpassword("");
-    setConfirmpass("");
-    setDate("");
-    setcheck("");
+    setShow(true);
+
+    setTimeout(() => setShow(false), 2000);
+    e.target.reset();
   };
 
   return (
@@ -165,6 +167,14 @@ function AddnewUser() {
               Add User
             </button>
           </div>
+
+          <Modal show={show} onHide={handleClose}>
+            <Modal.Header closeButton>
+              <Modal.Title>User Add</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>User Successfully added</Modal.Body>
+            <Modal.Footer></Modal.Footer>
+          </Modal>
         </div>
       </form>
     </>

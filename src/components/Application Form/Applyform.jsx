@@ -22,6 +22,10 @@ function Applyform() {
   const [team_lead_id, setid] = React.useState();
   const [token, setToken] = React.useState();
   const [show, setShow] = React.useState(false);
+
+  const start_dt = React.useRef(null);
+  const end_dt = React.useRef(null);
+
   const handleClose = () => setShow(false);
 
   React.useEffect(() => {
@@ -77,12 +81,7 @@ function Applyform() {
       console.log(err);
     }
     setShow(true);
-
-    settxtarea("");
-    setstartState("");
-    setendState("");
-    setli("");
-    setcheck("");
+    e.target.reset();
     setTimeout(() => setShow(false), 2000);
   };
   const handleChangearea = (event) => {
@@ -159,7 +158,7 @@ function Applyform() {
   return (
     <div>
       <div>
-        <form>
+        <form onSubmit={handledata}>
           <div className="login-style">
             <h3>Leave Request Form</h3>
             <div className="mb-3">
@@ -172,6 +171,7 @@ function Applyform() {
                 required
                 value={start}
                 onChange={(date) => handleChange(date)}
+                ref={start_dt}
               />
             </div>
 
@@ -183,6 +183,7 @@ function Applyform() {
                 required
                 value={end}
                 onChange={(date) => handleChangeend(date)}
+                ref={end_dt}
               />
             </div>
             {end < start ? (
@@ -243,7 +244,6 @@ function Applyform() {
                 disabled={!validate()}
                 type="submit"
                 className="btn btn-primary  btn"
-                onClick={handledata}
               >
                 Send
               </button>
