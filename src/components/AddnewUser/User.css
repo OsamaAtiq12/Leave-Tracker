@@ -6,9 +6,16 @@
 {
     color: red;
 }
-/* input[type=date]:required:invalid::-webkit-datetime-edit {
-    color: transparent;
+
+
+
+.btn{
+    margin-left: 10px;
 }
-input[type=date]:focus::-webkit-datetime-edit {
-    color: black !important;
-} */
+
+    
+.btn-area{
+    display: flex;
+    justify-content: space-evenly;
+   width: 300px;
+}

@@ -8,6 +8,8 @@ import axios from "axios";
 function Userlist() {
   const [EditingUser, setEditingUser] = React.useState(null);
   const [show, setShow] = React.useState(false);
+
+  const [show3, setShow3] = React.useState(false);
   const [show2, setShow2] = React.useState(false);
   const handleClose = () => setShow(false);
   const [Role, setRole] = React.useState();
@@ -75,7 +77,8 @@ function Userlist() {
       }
     };
     getdata();
-
+    setShow3(true);
+    setTimeout(() => setShow3(false), 1000);
     handleClose(true);
   };
 
@@ -367,6 +370,13 @@ function Userlist() {
               </thead>
               {datashow}
             </Table>
+            <Modal show={show3} onHide={handleClose}>
+              <Modal.Header closeButton>
+                <Modal.Title>User Deleted</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>User Successfully Deleted</Modal.Body>
+              <Modal.Footer></Modal.Footer>
+            </Modal>
           </div>
         </div>
 

@@ -108,6 +108,14 @@ function Applyform() {
   function handleChangecheck(e) {
     setcheck(e.target.checked);
   }
+  const Handelreset = (e) => {
+    e.preventDefault();
+    e.target.reset();
+    setstartState();
+    setendState();
+    settxtarea("");
+  };
+
   const validate = () => {
     if (start <= end) {
       if (
@@ -158,7 +166,7 @@ function Applyform() {
   return (
     <div>
       <div>
-        <form onSubmit={handledata}>
+        <form onSubmit={Handelreset}>
           <div className="login-style">
             <h3>Leave Request Form</h3>
             <div className="mb-3">
@@ -168,7 +176,6 @@ function Applyform() {
                 style={{ border: "none" }}
                 className="form-control input "
                 placeholder="Enter Start Date"
-                required
                 value={start}
                 onChange={(date) => handleChange(date)}
                 ref={start_dt}
@@ -180,7 +187,6 @@ function Applyform() {
               <DatePicker
                 className="form-control input r"
                 placeholder="Enter End Date"
-                required
                 value={end}
                 onChange={(date) => handleChangeend(date)}
                 ref={end_dt}
@@ -240,13 +246,19 @@ function Applyform() {
               <div className="custom-control custom-checkbox"></div>
             </div>
             <div className="d-grid">
-              <button
-                disabled={!validate()}
-                type="submit"
-                className="btn btn-primary  btn"
-              >
-                Send
-              </button>
+              <div className="btn-area">
+                <button
+                  disabled={!validate()}
+                  type="submit"
+                  className="btn btn-primary  btn"
+                  onSubmit={handledata}
+                >
+                  Send
+                </button>
+                <button type="submit" className="btn btn-danger  btn  ">
+                  Reset
+                </button>{" "}
+              </div>
 
               <Modal show={show} onHide={handleClose}>
                 <Modal.Header closeButton>

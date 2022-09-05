@@ -7,3 +7,16 @@
 .Error{
     color: red;
 }
+
+
+
+.btn{
+    margin-left: 10px;
+}
+
+    
+.btn-area{
+    display: flex;
+    justify-content: space-evenly;
+   width: 300px;
+}

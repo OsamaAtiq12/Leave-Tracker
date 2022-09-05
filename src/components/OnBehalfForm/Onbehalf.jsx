@@ -126,6 +126,15 @@ function OnBehalf() {
   function handleChangecheck(e) {
     setcheck(e.target.checked);
   }
+
+  const Handelreset = (e) => {
+    e.preventDefault();
+    e.target.reset();
+
+    setstartState();
+    setendState();
+    settxtarea("");
+  };
   const validate = () => {
     if (start <= end) {
       if (
@@ -186,7 +195,7 @@ function OnBehalf() {
   return (
     <div>
       <div>
-        <form>
+        <form onSubmit={Handelreset}>
           <div className="login-style">
             <h3>On Behalf Leave</h3>
             <br />
@@ -208,7 +217,6 @@ function OnBehalf() {
                 style={{ border: "none" }}
                 className="form-control input "
                 placeholder="Enter Start Date"
-                required
                 value={start}
                 onChange={(date) => handleChange(date)}
               />
@@ -219,7 +227,6 @@ function OnBehalf() {
               <DatePicker
                 className="form-control input r"
                 placeholder="Enter End Date"
-                required
                 value={end}
                 onChange={(date) => handleChangeend(date)}
               />
@@ -274,14 +281,19 @@ function OnBehalf() {
               <div className="custom-control custom-checkbox"></div>
             </div>
             <div className="d-grid">
-              <button
-                disabled={!validate()}
-                type="submit"
-                className="btn btn-primary  btn"
-                onClick={handlebehalf}
-              >
-                Send
-              </button>
+              <div className="btn-area">
+                <button
+                  disabled={!validate()}
+                  type="submit"
+                  className="btn btn-primary  btn"
+                  onClick={handlebehalf}
+                >
+                  Send
+                </button>
+                <button type="submit" className="btn btn-danger  btn  ">
+                  Reset
+                </button>{" "}
+              </div>
 
               <Modal show={show} onHide={handleClose}>
                 <Modal.Header closeButton>

@@ -48,6 +48,12 @@ function AddnewUser() {
     }
   }
 
+  const Handelreset = (e) => {
+    e.preventDefault();
+    e.target.reset();
+    setDate();
+  };
+
   const Handeldata = (e) => {
     e.preventDefault();
 
@@ -82,7 +88,7 @@ function AddnewUser() {
 
   return (
     <>
-      <form>
+      <form onSubmit={Handelreset}>
         <div className="login-style">
           <h3>Add new User</h3>
           <div className="mb-3">
@@ -91,7 +97,6 @@ function AddnewUser() {
               type="text"
               className="form-control input"
               placeholder="Enter Name"
-              required
               onChange={handlename}
             />
           </div>
@@ -102,7 +107,6 @@ function AddnewUser() {
               type="email"
               className="form-control input"
               placeholder="Enter email"
-              required
               onChange={handleEmail}
             />
           </div>
@@ -111,7 +115,6 @@ function AddnewUser() {
             <input
               type="password"
               className="form-control input"
-              required
               onChange={handlesetpass}
             />
           </div>
@@ -121,7 +124,6 @@ function AddnewUser() {
             <input
               type="password"
               className="form-control input"
-              required
               onChange={handleconpass}
             />
           </div>
@@ -137,7 +139,6 @@ function AddnewUser() {
             <DatePicker
               className="form-control input r"
               placeholder="Enter End Date"
-              required
               value={date}
               onChange={(date) => handleDate(date)}
             />
@@ -158,14 +159,20 @@ function AddnewUser() {
             <div className="custom-control custom-checkbox"></div>
           </div>
           <div className="d-grid">
-            <button
-              type="submit"
-              className="btn btn-primary  btn"
-              disabled={!validate()}
-              onClick={Handeldata}
-            >
-              Add User
-            </button>
+            <div className="btn-area">
+              {" "}
+              <button
+                type="submit"
+                className="btn btn-primary  btn"
+                disabled={!validate()}
+                onClick={Handeldata}
+              >
+                Add User
+              </button>
+              <button type="submit" className="btn btn-danger  btn  ">
+                Reset
+              </button>{" "}
+            </div>
           </div>
 
           <Modal show={show} onHide={handleClose}>
