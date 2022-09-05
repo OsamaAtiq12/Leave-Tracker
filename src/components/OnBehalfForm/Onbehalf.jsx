@@ -1,5 +1,5 @@
 import React from "react";
-
+import { Modal, Button } from "react-bootstrap";
 import DatePicker from "react-date-picker";
 import "bootstrap/dist/css/bootstrap.min.css";
 import TextareaAutosize from "@mui/material/TextareaAutosize";
@@ -16,7 +16,8 @@ function OnBehalf() {
   const [liemp, setliemp] = React.useState("");
   const [list2, setnamelist] = React.useState([{}]);
   const [list3, setnamelist3] = React.useState([{}]);
-
+  const [show, setShow] = React.useState(false);
+  const handleClose = () => setShow(false);
   const [selectedval, setselectedval] = React.useState([{}]);
   const [token, setToken] = React.useState();
   // React.useEffect(() => {
@@ -98,13 +99,14 @@ function OnBehalf() {
     } catch (err) {
       console.log(err);
     }
+    setShow(true);
+    // setstartState("");
+    // setendState("");
+    // setli("");
+    // setliemp("");
 
-    setstartState("");
-    setendState("");
-    setli("");
-    setliemp("");
-    setcheck("");
-    settxtarea("");
+    // settxtarea("");
+    setTimeout(() => setShow(false), 2000);
   };
 
   function handleChange(date) {
@@ -280,6 +282,14 @@ function OnBehalf() {
               >
                 Send
               </button>
+
+              <Modal show={show} onHide={handleClose}>
+                <Modal.Header closeButton>
+                  <Modal.Title>Leave Application</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>Your Leave Request Has been Submitted</Modal.Body>
+                <Modal.Footer></Modal.Footer>
+              </Modal>
             </div>
           </div>
         </form>

@@ -1,6 +1,10 @@
 import React, { useEffect, useRef } from "react";
+import { ReactDialogBox } from "react-js-dialog-box";
+import "react-js-dialog-box/dist/index.css";
 import { useNavigate } from "react-router-dom";
 import "./Login.css";
+import { Modal } from "bootstrap";
+import Button from "mui-button";
 import "bootstrap/dist/css/bootstrap.min.css";
 import axios from "axios";
 function Login() {
@@ -12,6 +16,7 @@ function Login() {
 
   const [email1, setemail] = React.useState();
   const [pass, setpass] = React.useState();
+  const [msg, setErrromessage] = React.useState();
 
   const handleemail = (e) => {
     setemail(e.target.value);
@@ -52,6 +57,7 @@ function Login() {
           localStorage.setItem("username", token_data.userName);
 
           localStorage.setItem("ID", response.data.id);
+
           var getrole = localStorage.getItem("role");
           var final_role = [];
           if (getrole) {
@@ -77,7 +83,8 @@ function Login() {
     } catch (err) {
       if (!err?.response) {
         console.log("no response");
-      } else {
+      } else if (err.response?.status === 500) {
+        setErrromessage("Invalid Credentials Please Try Again.");
       }
     }
   };
@@ -114,6 +121,8 @@ function Login() {
             onChange={handlepass}
           />
         </div>
+
+        <label className="error-msg">{msg}</label>
         <div className="mb-3 input-div">
           <div className="custom-control custom-checkbox"></div>
         </div>

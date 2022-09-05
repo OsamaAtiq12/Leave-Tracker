@@ -21,6 +21,8 @@ function Applyform() {
   const [list2, setnamelist] = React.useState([{}]);
   const [team_lead_id, setid] = React.useState();
   const [token, setToken] = React.useState();
+  const [show, setShow] = React.useState(false);
+  const handleClose = () => setShow(false);
 
   React.useEffect(() => {
     const Token = localStorage.getItem("token");
@@ -74,12 +76,14 @@ function Applyform() {
     } catch (err) {
       console.log(err);
     }
+    setShow(true);
 
     settxtarea("");
     setstartState("");
     setendState("");
     setli("");
     setcheck("");
+    setTimeout(() => setShow(false), 2000);
   };
   const handleChangearea = (event) => {
     settxtarea(event.target.value);
@@ -243,6 +247,14 @@ function Applyform() {
               >
                 Send
               </button>
+
+              <Modal show={show} onHide={handleClose}>
+                <Modal.Header closeButton>
+                  <Modal.Title>Leave Application</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>Your Leave Request Has been Submitted</Modal.Body>
+                <Modal.Footer></Modal.Footer>
+              </Modal>
             </div>
           </div>
         </form>

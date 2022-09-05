@@ -66,6 +66,9 @@ function EventCal() {
         startAccessor="start"
         endAccessor="end"
         style={{ height: 700, margin: "50px", width: "auto" }}
+        onShowMore={const show(() => {
+          console.log(list2);
+        })}
       />
     </div>
   );

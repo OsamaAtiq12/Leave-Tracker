@@ -171,32 +171,10 @@ function Orders() {
                         ) : order.Status === "Applied" ? (
                           <>
                             <Icon
-                              onClick={handleShow}
+                              onClick={(e) => handleDelete(order.ID, e)}
                               className="dashboard-content-icon  pointer"
                               icon="fluent:delete-dismiss-24-filled"
                             />
-                            <Modal show={show} onHide={handleClose}>
-                              <Modal.Header closeButton>
-                                <Modal.Title>Delete</Modal.Title>
-                              </Modal.Header>
-                              <Modal.Body>
-                                Are you Sure you want to delete the record
-                              </Modal.Body>
-                              <Modal.Footer>
-                                <Button
-                                  variant="secondary"
-                                  onClick={handleClose}
-                                >
-                                  Close
-                                </Button>
-                                <Button
-                                  variant="primary"
-                                  onClick={(e) => handleDelete(order.ID, e)}
-                                >
-                                  Delete
-                                </Button>
-                              </Modal.Footer>
-                            </Modal>
                           </>
                         ) : null}
                         <span>{order.Status}</span>
